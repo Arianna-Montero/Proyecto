@@ -17,3 +17,11 @@ class Obra:
         self.tipo = tipo
         self.anio_creacion = anio_creacion
         self.imagen_obra = imagen_obra
+
+    def show(self):
+        print(f"""Título: {self.titulo}
+Nombre del artista: {self.artista}
+ID del departamento: {self.id_departamento}
+Tipo de obra: {self.tipo}
+Año de creación: {self.anio_creacion}
+Imagen de la obra: {self.imagen_obra}""")
