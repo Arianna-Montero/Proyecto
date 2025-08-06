@@ -139,13 +139,18 @@ Elija una opción de búqueda de obras:
     
     def crear_obejtos2(self):
         nacionalidades_dic = self.objects_datos.json()
-        todas_ids = nacionalidades_dic["objectIDs"][:3]
+        todas_ids = nacionalidades_dic["objectIDs"][:10]
             
+        self.muchas_nacionalidades = []
         self.nacionalidades = []
             
         for nacionalidad in todas_ids:
             mucho_dato = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/objects/{nacionalidad}")
             datos = mucho_dato.json()
                 
-            self.nacionalidades.append(datos["artistNationality"])
+            self.muchas_nacionalidades.append(datos["artistNationality"])
+        
+        for nacion in self.muchas_nacionalidades:
+            if nacion not in self.nacionalidades:
+                self.nacionalidades.append(nacion)
 
