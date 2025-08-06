@@ -2,6 +2,7 @@ from Departamento import Departamento
 from Obra import Obra
 from Autor import Autor
 import requests
+
 class Museo:
     def __init__(self, objects_datos, object_datos, deparments_datos):
     #, search_datos_departamentos, search_datos_localitation
@@ -14,6 +15,7 @@ class Museo:
     
     def start(self):
         self.crear_objetos()
+        self.crear_obejtos2()
         
         while True:
             print()
@@ -37,10 +39,12 @@ Elija una opción de búqueda de obras:
                 self.mostrar_obra()
                     
             elif busqueda== "2":
-                for autor in self.autores:
-                    autor.show()
-                    print()
+                
+                for nacionalidad in self.nacionalidades:
+                    print(nacionalidad)
+                    
                 self.buscar_obra_nacionalidad()
+                
                 self.mostrar_obra()
 
             elif busqueda == "3":
@@ -132,3 +136,16 @@ Elija una opción de búqueda de obras:
         
         #self.obras.append(Obra(obras["title"], obras["artistDisplayName"], departamento_encontrado, obras["objectName"], obras["objectBeginDate"], obras["primaryImage"]))
         #Ari hay que crear clases u objetos de los "search" porque todos los diccionarios deben ser objetos y ver como hacemos una clase de autores que sirva pq ya me rendí.
+    
+    def crear_obejtos2(self):
+        nacionalidades_dic = self.objects_datos.json()
+        todas_ids = nacionalidades_dic["objectIDs"][:3]
+            
+        self.nacionalidades = []
+            
+        for nacionalidad in todas_ids:
+            mucho_dato = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/objects/{nacionalidad}")
+            datos = mucho_dato.json()
+                
+            self.nacionalidades.append(datos["artistNationality"])
+
