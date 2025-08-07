@@ -65,7 +65,7 @@ Elija una opción de búqueda de obras:
                 print("No válido, ingrese un número")
                 print()
     
-    def crear_objetos_departamento(self):
+    def crear_objetos(self):
         
         departamentos_dic = self.deparments_datos.json()
         nacionalidaddes_dic = self.nacionalities
@@ -80,9 +80,9 @@ Elija una opción de búqueda de obras:
         for departamento in departamentos_dic["departments"]:
             self.departamentos.append(Departamento(departamento["displayName"], departamento["departmentId"]))
         
-        autores_nombres = self.autores_abecedario()
-        for autor in autores_nombres:
-            self.autores.append(Autor(autor))
+       # autores_nombres = self.autores_abecedario()
+       # for autor in autores_nombres:
+           # self.autores.append(Autor(autor))
         
         
         #for objectID in obras_dic["objectIDs"]:
@@ -112,29 +112,27 @@ Elija una opción de búqueda de obras:
         try:
             object_list = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/objects/{obraID}", timeout= 20) 
             obra_m= object_list.json()
-            self.obras.append(Obra(obra_m.get("title"), obra_m.get("artistDisplayName"), obra_m.get("artistNationality"), obra_m.get("artistBeginDate"), obra_m.get("artistEndDate"), obra_m.get("objectName"), obra_m.get("objectDate"), obra_m.get("primaryImage")))
+            self.obras.append(Obra(obra_m.get("title"), obra_m.get("artistDisplayName"), obra_m.get("artistNationality"), obra_m.get("artistBeginDate"), obra_m.get("artistEndDate"), obra_m.get("objectName"), obra_m.get("objectDate")))
             for obra in self.obras:
                 obra.show()
                 print()   
             
-        except requests.exceptions.RequestException as e:
-                print("ID no encontrado")
-                pass
-            
-        id = input("""¿Mostrar imagen?
+            id = input("""¿Mostrar imagen?
 -> Si
 -> No                           
 """)
-        print(id)
-        
-        if id == "Si":
-             
-            if obra_m.get("primaryImage"):
-                nombre_archivo_destino = guardar_imagen_desde_url(obra_m["primaryImage"], f"obra_{obraID}")
-                img = Image.open(nombre_archivo_destino)
-                img.show()                       
-                
-                                        
+            print()
+            if id == "Si":
+                if obra_m.get("primaryImage"):
+                    nombre_archivo_destino = guardar_imagen_desde_url(obra_m["primaryImage"], f"obra_{obraID}")
+                    img = Image.open(nombre_archivo_destino)
+                    img.show()                      
+            else:
+                 pass
+        except requests.exceptions.RequestException as e:
+            print("ID no encontrado")
+
+                                               
     def buscar_obra_departamentoID(self):
         obras_departamento = int(input("Escriba el ID del departamento para ver las obras: "))
         print()
@@ -153,7 +151,8 @@ Elija una opción de búqueda de obras:
                     except requests.exceptions.RequestException as e:
                         break
         except requests.exceptions.RequestException as e:
-            pass
+            print("Departamento no encontrado")
+            return
             #self.mostrar_obra.append(Obras(obra.get("objectID"), obra.get("title"), obra.get("artistDisplayName")))
             #for obra in self.obras:
                 #obra.show()
@@ -174,11 +173,10 @@ Elija una opción de búqueda de obras:
                         obra.show()
                         print()
                 except requests.exceptions.RequestException as e:
-                    print("No se pudo encontrar las obras")
                     break
         except requests.exceptions.RequestException as e:
-                print("No se puso encontrar la nacionalidad")
-                pass
+            print("No se puso encontrar la nacionalidad")
+            return
             #self.nacionalidades.append(Obras(obra.get("objectID"), obra.get("title"), obra.get("artistDisplayName")))     
             #for obra in self.obras:
                 #obra.show()
@@ -204,17 +202,15 @@ Elija una opción de búqueda de obras:
             for id_obra in ids_obras:
                     
                 buscar_obra = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/objects/{id_obra}")
-            obra = buscar_obra.json()
+                obra = buscar_obra.json()
                 
-            buscar_nombre = obra.get("artistDisplayName")
+                buscar_nombre = obra.get("artistDisplayName")
                     
-            if buscar_nombre not in autores:
-                autores.append(buscar_nombre)
+                if buscar_nombre not in autores:
+                    autores.append(buscar_nombre)
             
         return autores
-            
-            
-    
+
         
     def buscar_obra_autor(self):
         nombre_autor = input("Escriba el nombre del autor: ")
@@ -233,10 +229,9 @@ Elija una opción de búqueda de obras:
                 except requests.exceptions.RequestException as e:
                         break
         except requests.exceptions.RequestException as e:
-            print("No se puso encontrar al autor")
-            pass
-   
-          
+            print("No se pudo encontrar al autor")
+            return
+            
             #self.obras.append(Obras(obra["objectIDs"]))
         #print(f"Id de la obra: {mostrar_obra["objectID"]}, Título: {mostrar_obra["title"]}, Nombre del autor: {mostrar_obra["artistAlphaSort"]}")
     
@@ -251,6 +246,7 @@ Elija una opción de búqueda de obras:
                 
         #        except requests.exceptions.RequestException as e:
         #            break
+
 
 
 
