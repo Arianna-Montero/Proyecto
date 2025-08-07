@@ -82,7 +82,7 @@ Elija una opción de búqueda de obras:
         
         autores_nombres = self.autores_abecedario()
         for autor in autores_nombres:
-            self.autores.append(Autor(autor, None, None, None))
+            self.autores.append(Autor(autor))
         
         
         #for objectID in obras_dic["objectIDs"]:
@@ -251,5 +251,6 @@ Elija una opción de búqueda de obras:
                 
         #        except requests.exceptions.RequestException as e:
         #            break
+
 
 
