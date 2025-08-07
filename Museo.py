@@ -10,7 +10,7 @@ from PIL import Image
 from Imagen import guardar_imagen_desde_url
 
 class Museo:
-    def __init__(self, deparments_datos, objects_datos, nacionalidades):
+    def __init__(self, objects_datos, deparments_datos, nacionalidades):
         self.objects_datos=objects_datos
         self.deparments_datos=deparments_datos
         self.nacionalidades= nacionalidades
@@ -84,20 +84,15 @@ Elija una opción de búqueda de obras:
            
     def crear_objetos(self):
         
-        departamentos_dic = self.deparments_datos
         nacionalidaddes_dic = self.nacionalidades
         
-        #self.departamentos = []
+        self.departamentos = []
         #self.obras= []
         self.nacionalidades= []
         #self.autores = []
         
-
-            
-        for departamento in departamentos_dic:
+        for departamento in self.deparments_datos["departments"]:
             self.departamentos.append(Departamento(departamento["displayName"], departamento["departmentId"]))
-                
-       
         
         for nacionalidad in nacionalidaddes_dic:
             self.nacionalidades.append(Nacionalidad(nacionalidad))
@@ -283,5 +278,3 @@ Elija una opción de búqueda de obras:
                 
         #        except requests.exceptions.RequestException as e:
         #            break
-
-
