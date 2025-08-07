@@ -2,6 +2,7 @@ from Departamento import Departamento
 from Obra import Obra
 from Autor import Autor
 from Obras import Obras
+from Nacionalidades import Nacionalidad
 
 import requests
 
