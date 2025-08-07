@@ -7,6 +7,6 @@ class Autor:
     """    
     def __init__(self, nombre_artista):
         self.nombre_artista = nombre_artista
+        
     def show(self):
-        print(f"""Artista: {self.nombre_artista}""")
-
+        print(f"Artista: {self.nombre_artista}")
