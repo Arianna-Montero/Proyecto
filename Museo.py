@@ -92,14 +92,12 @@ Elija una opción de búqueda de obras:
         self.nacionalidades= []
         #self.autores = []
         
-        if "departments" in departamentos_dic:
+
             
-            for departamento in departamentos_dic:
-                self.departamentos.append(Departamento(departamento["displayName"], departamento["departmentId"]))
+        for departamento in departamentos_dic:
+            self.departamentos.append(Departamento(departamento["displayName"], departamento["departmentId"]))
                 
-        else:
-            print("Error: No se pudieron cargar los datos de los departamentos. Verifica la conexión a la API o el formato de los datos.")
-            
+       
         
         for nacionalidad in nacionalidaddes_dic:
             self.nacionalidades.append(Nacionalidad(nacionalidad))
@@ -285,4 +283,5 @@ Elija una opción de búqueda de obras:
                 
         #        except requests.exceptions.RequestException as e:
         #            break
+
 
