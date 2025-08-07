@@ -6,6 +6,7 @@ from Obras import Obras
 import requests
 
 from PIL import Image
+from Imagen import guardar_imagen_desde_url
 
 class Museo:
     def __init__(self, objects_datos, object_datos, deparments_datos):
@@ -16,7 +17,6 @@ class Museo:
         #self.search_departamentos=search_datos_departamentos
         #self.search_lacalitation= search_datos_localitation
 
-    
     def start(self):
         self.crear_objetos()
                 
@@ -66,10 +66,10 @@ Elija una opción de búqueda de obras:
                 print("No válido, ingrese un número")
                 print()
     
-    
     def mostrar_obra(self):
         obraID = int(input("Ingrese el id de la obra que desea ver: "))
         print()
+        
         object_list = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/objects/{obraID}", timeout= 30) 
         
         obra_m= object_list.json()
@@ -87,49 +87,11 @@ Elija una opción de búqueda de obras:
         
         if id == "Si":
              
-            self.guardar_imagen_desde_url(obra_m["primaryImage"], f"obra_{obraID}")
-            #print(nombre_archivo_destino)
-            #img = Image.open(nombre_archivo_destino)
-            #img.show()
-                          
-    def guardar_imagen_desde_url(url, nombre_archivo):
-        
-            """
-            Descarga una imagen desde una URL y la guarda en un archivo.
-            """
-            try:
-                
-                response = requests.get(url, stream=True)
-                response.raise_for_status()  
-
-                content_type = response.headers.get('Content-Type')
-                extension = '.png'  
-                
-                if content_type:
+            if obra_m.get("primaryImage"):
+                nombre_archivo_destino = guardar_imagen_desde_url(obra_m["primaryImage"], f"obra_{obraID}")
                     
-                    if 'image/png' in content_type:
-                        extension = '.png'
-                        
-                    elif 'image/jpeg' in content_type:
-                        extension = '.jpg'
-                        
-                    elif 'image/svg+xml' in content_type:
-                        extension = '.svg'
-                        
-                nombre_archivo_final = f"{nombre_archivo}{extension}"
-
-                with open(nombre_archivo_final, 'wb') as file:
-                    for chunk in response.iter_content(chunk_size=8192):
-                        file.write(chunk)
-                print(f"Imagen guardada exitosamente como '{nombre_archivo_final}'")
-
-            except requests.exceptions.RequestException as e:
-                print(f"Error al hacer el request: {e}")
-                
-            except IOError as e:
-                print(f"Error al escribir el archivo: {e}")
-                
-            return nombre_archivo_final
+                img = Image.open(nombre_archivo_destino)
+                img.show()                       
                                         
     def buscar_obra_departamentoID(self):
         obras_departamento = int(input("Escriba el ID del departamento para ver las obras: "))
