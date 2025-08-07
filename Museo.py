@@ -2,6 +2,7 @@ from Departamento import Departamento
 from Obra import Obra
 from Autor import Autor
 from Obras import Obras
+from Nacionalidades import Nacionalidad
 
 import requests
 
@@ -9,13 +10,10 @@ from PIL import Image
 from Imagen import guardar_imagen_desde_url
 
 class Museo:
-    def __init__(self, objects_datos, object_datos, deparments_datos):
-    #, search_datos_departamentos, search_datos_localitation
+    def __init__(self, objects_datos, deparments_datos, nacionalities):
         self.objects_datos=objects_datos
-        self.object_datos=object_datos
         self.deparments_datos=deparments_datos
-        #self.search_departamentos=search_datos_departamentos
-        #self.search_lacalitation= search_datos_localitation
+        self.nacionalities= nacionalities
 
     def start(self):
         self.crear_objetos()
@@ -43,13 +41,8 @@ Elija una opción de búqueda de obras:
                                     
             elif busqueda== "2":
                 
-                nacionalidades = ["Afghan", "Albanian", "Algerian", "American", "Andorran", "Angolan", "Anguillan", "Argentine", "Armenian", "Australian", "Austrian", "Azerbaijani", "Bahamian", "Bahraini", "Bangladeshi", "Barbadian", "Belarusian", "Belgian", "Belizean", "Beninese", "Bermudian", "Bhutanese", "Bolivian", "Botswanan", "Brazilian", "British", "British Virgin Islander", "Bruneian", "Bulgarian", "Burkinan", "Burmese", "Burundian", "Cambodian", "Cameroonian", "Canadian", "Cape Verdean", "Cayman Islander", "Central African", "Chadian", "Chilean", "Chinese", "Citizen of Antigua and Barbuda", "Citizen of Bosnia and Herzegovina", "Citizen of Guinea-Bissau", "Citizen of Kiribati", "Citizen of Seychelles", "Citizen of the Dominican Republic", "Citizen of Vanuatu", "Colombian", "Comoran", "Congolese (Congo)", "Congolese (DRC)", "Cook Islander", "Costa Rican", "Croatian", "Cuban", "Cymraes", "Cymro", "Cypriot", "Czech", "Danish", "Djiboutian", "Dominican", "Dutch", "East Timorese", "Ecuadorean", "Egyptian", "Emirati", "English", "Equatorial Guinean", "Eritrean", "Estonian", "Ethiopian", "Faroese", "Fijian", "Filipino", "Finnish", "French", "Gabonese", "Gambian", "Georgian", "German", "Ghanaian", "Gibraltarian", "Greek", "Greenlandic", "Grenadian", "Guamanian", "Guatemalan", "Guinean", "Guyanese", "Haitian", "Honduran", "Hong Konger", "Hungarian", "Icelandic", "Indian", "Indonesian", "Iranian", "Iraqi", "Irish", "Israeli", "Italian", "Ivorian", "Jamaican", "Japanese", "Jordanian", "Kazakh", "Kenyan", "Kittitian", "Kosovan", "Kuwaiti", "Kyrgyz", "Lao", "Latvian", "Lebanese", "Liberian", "Libyan", "Liechtenstein citizen", "Lithuanian", "Luxembourger", "Macanese", "Macedonian", "Malagasy", "Malawian", "Malaysian", "Maldivian", "Malian", "Maltese", "Marshallese", "Martiniquais", "Mauritanian", "Mauritian", "Mexican", "Micronesian", "Moldovan", "Monegasque", "Mongolian", "Montenegrin", "Montserratian", "Moroccan", "Mosotho", "Mozambican", "Namibian", "Nauruan", "Nepalese", "New Zealander", "Nicaraguan", "Nigerian", "Nigerien", "Niuean", "North Korean", "Northern Irish", "Norwegian", "Omani", "Pakistani", "Palauan", "Palestinian", "Panamanian", "Papua New Guinean", "Paraguayan", "Peruvian", "Pitcairn Islander", "Polish", "Portuguese", "Prydeinig", "Puerto Rican", "Qatari", "Romanian", "Russian", "Rwandan", "Salvadorean", "Sammarinese", "Samoan", "Sao Tomean", "Saudi Arabian", "Scottish", "Senegalese", "Serbian", "Sierra Leonean", "Singaporean", "Slovak", "Slovenian", "Solomon Islander", "Somali", "South African", "South Korean", "South Sudanese", "Spanish", "Sri Lankan", "St Helenian", "St Lucian", "Stateless", "Sudanese", "Surinamese", "Swazi", "Swedish", "Swiss", "Syrian", "Taiwanese", "Tajik", "Tanzanian", "Thai", "Togolese", "Tongan", "Trinidadian", "Tristanian", "Tunisian", "Turkish", "Turkmen", "Turks and Caicos Islander", "Tuvaluan", "Ugandan", "Ukrainian", "Uruguayan", "Uzbek", "Vatican citizen", "Venezuelan", "Vietnamese", "Vincentian", "Wallisian", "Welsh", "Yemeni", "Zambian", "Zimbabwean"]
-                
-                for nacion in nacionalidades:
-                    print(nacion)
-                                                   
+                self.mostrar_nacionalidades()
                 self.buscar_obra_nacionalidad()
-                
                 self.mostrar_obra()
 
             elif busqueda == "3":
@@ -65,22 +58,25 @@ Elija una opción de búqueda de obras:
                 self.mostrar_obra()
 
             elif busqueda== "4":
+                print("Gracias por visitarnos")
+                print()
                 break
-            
             else:
                 print("No válido, ingrese un número")
                 print()
     
-    def crear_objetos(self):
+    def crear_objetos_departamento(self):
         
         departamentos_dic = self.deparments_datos.json()
-        #obras_rec = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/objects", timeout=40)
-        #obras_dic= obras_rec.json()
-
+        nacionalidaddes_dic = self.nacionalities
         self.departamentos = []
-        self.autores = []
         self.obras= []
-
+        self.nacionalidades= []
+        self.autores = []
+        
+        for nacionalidad in nacionalidaddes_dic:
+            self.nacionalidades.append(Nacionalidad(nacionalidad))
+        
         for departamento in departamentos_dic["departments"]:
             self.departamentos.append(Departamento(departamento["displayName"], departamento["departmentId"]))
         
@@ -107,19 +103,23 @@ Elija una opción de búqueda de obras:
                   #departamento_encontrado == departamento
         
         #self.obras.append(Obra(obras["title"], obras["artistDisplayName"], departamento_encontrado, obras["objectName"], obras["objectBeginDate"], obras["primaryImage"]))
-        
+        #deberiamos borrar todo esto
     
-    def mostrar_obra(self):
+def mostrar_obra(self):
+    
         obraID = int(input("Ingrese el id de la obra que desea ver: "))
         print()
-        
-        object_list = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/objects/{obraID}", timeout= 30) 
-        obra_m= object_list.json()
-               
-        self.obras.append(Obra(obra_m.get("title"), obra_m.get("artistDisplayName"), obra_m.get("artistNationality"), obra_m.get("artistBeginDate"), obra_m.get("artistEndDate"), obra_m.get("objectName"), obra_m.get("objectDate"), obra_m.get("primaryImage")))
-        for obra in self.obras:
-            obra.show()
-            print()
+        try:
+            object_list = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/objects/{obraID}", timeout= 20) 
+            obra_m= object_list.json()
+            self.obras.append(Obra(obra_m.get("title"), obra_m.get("artistDisplayName"), obra_m.get("artistNationality"), obra_m.get("artistBeginDate"), obra_m.get("artistEndDate"), obra_m.get("objectName"), obra_m.get("objectDate"), obra_m.get("primaryImage")))
+            for obra in self.obras:
+                obra.show()
+                print()   
+          
+        except requests.exceptions.RequestException as e:
+            print("ID no encontrado")
+            pass
         
         id = input("""¿Mostrar imagen?
 -> Si
@@ -136,19 +136,24 @@ Elija una opción de búqueda de obras:
                 img.show()                       
                                         
     def buscar_obra_departamentoID(self):
-        obras_departamento = int(input("Escriba el ID del departamento para ver las obras: "))
+         obras_departamento = int(input("Escriba el ID del departamento para ver las obras: "))
         print()
-        
-        search_obras_departamento = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/search?departmentId={obras_departamento}&q=cat") 
-        search_departamento = search_obras_departamento.json()
-        obras_ids = search_departamento["objectIDs"]
-        
-        for id in obras_ids[:10]:
-            obras_encontradas = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/objects/{id}", timeout=20)         
-            mostrar_obra = obras_encontradas.json()
-            
-            print(f"Id de la obra: {mostrar_obra["objectID"]}, Título: {mostrar_obra["title"]}, Nombre del autor: {mostrar_obra["artistAlphaSort"]}")
-            
+        try:
+            search_obras_departamento = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/search?departmentId={obras_departamento}&q=cat") 
+            search_departamento = search_obras_departamento.json()
+            for id in search_departamento["objectIDs"]:
+                    try:
+                        object_list = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/objects/{id}", timeout=20) 
+                        obra= object_list.json()
+                        self.obras.append(Obras(obra.get("objectID"), obra.get("title"), obra.get("artistDisplayName")))
+                        for obra in self.obras:
+                            obra.show()
+                            print()
+                    
+                    except requests.exceptions.RequestException as e:
+                        break
+        except requests.exceptions.RequestException as e:
+             pass
             #self.mostrar_obra.append(Obras(obra.get("objectID"), obra.get("title"), obra.get("artistDisplayName")))
             #for obra in self.obras:
                 #obra.show()
@@ -156,28 +161,33 @@ Elija una opción de búqueda de obras:
           
     def buscar_obra_nacionalidad(self):
         
-        nacionalidad = str(input("Ingrese la nacionalidad de las obras que desea ver: "))
-        print(nacionalidad)
-        
-        search_nacionalidad = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/search?artistOrCulture=true&q={nacionalidad}")
-        
-        obra_nacionalidad = search_nacionalidad.json()
-        todas_ids = obra_nacionalidad["objectIDs"]
-        
-        self.nacionalidades = []
-               
-        for id in todas_ids[:10]:
-            
-            mucho_dato = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/objects/{id}")
-            datos = mucho_dato.json()
-            
-            print(f"Id de la obra: {datos["objectID"]}, Título: {datos["title"]}, Nombre del autor: {datos["artistAlphaSort"]}")
-            
+       nacionalidad= input("Ingrese la nacionalidad del autor: ")
+            print()
+            try: 
+                search_obras_localidad = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/search?artistOrCulture=true&q={nacionalidad}")
+                search_localidad = search_obras_localidad.json() 
+                for id in search_localidad["objectIDs"]:
+                    try:
+                        object_list = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/objects/{id}", timeout=20) 
+                        obra= object_list.json()
+                        self.obras.append(Obras(obra.get("objectID"), obra.get("title"), obra.get("artistDisplayName")))
+                        for obra in self.obras:
+                            obra.show()
+                            print()
+                    except requests.exceptions.RequestException as e:
+                        print("No se pudo encontrar las obras")
+                        break
+            except requests.exceptions.RequestException as e:
+                    print("No se puso encontrar la nacionalidad")
+                    pass
             #self.nacionalidades.append(Obras(obra.get("objectID"), obra.get("title"), obra.get("artistDisplayName")))     
             #for obra in self.obras:
                 #obra.show()
                 #print()
-                   
+    
+def mostrar_nacionalidades(self):
+        for nacionalidad in self.nacionalidades:
+            nacionalidad.show()               
     
     def autores_abecedario(self):
         """
@@ -209,25 +219,26 @@ Elija una opción de búqueda de obras:
         
     def buscar_obra_autor(self):
         nombre_autor = input("Escriba el nombre del autor: ")
-        search_obras_autor = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/search?artistOrCulture=true&q={nombre_autor}")
-        search_autor = search_obras_autor.json()
-        autor_ids = search_autor["objectIDs"]
+        try: 
+            search_obras_autor = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/search?artistOrCulture=true&q={nombre_autor}", timeout=20)
+            search_autor = search_obras_autor.json()  
+            for id in search_autor["objectIDs"]:
+                try:
+                    object_list = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/objects/{id}", timeout=20) 
+                    obra= object_list.json()
+                    self.obras.append(Obras(obra.get("objectID"), obra.get("title"), obra.get("artistDisplayName")))
+                    for obra in self.obras:
+                        obra.show()
+                        print()
         #print(search_autor) #<-código ari
-        
-        for id in autor_ids[:10]:
-            try:
-                object_list = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/objects/{id}", timeout=20) 
-                obra= object_list.json()
-                self.obras.append(Obras(obra.get("objectID"), obra.get("title"), obra.get("artistDisplayName")))
-                for obra in self.obras:
-                    obra.show()
-                    print()
-                
-            except requests.exceptions.RequestException as e:
-                break
+                except requests.exceptions.RequestException as e:
+                    break
+        except requests.exceptions.RequestException as e:
+                print("No se puso encontrar al autor")
+                pass
    
-            #self.obras.append(Obras(obra["objectIDs"]))
           
+            #self.obras.append(Obras(obra["objectIDs"]))
         #print(f"Id de la obra: {mostrar_obra["objectID"]}, Título: {mostrar_obra["title"]}, Nombre del autor: {mostrar_obra["artistAlphaSort"]}")
     
         #for id in search_departamento["objectIDs"]:
@@ -241,3 +252,4 @@ Elija una opción de búqueda de obras:
                 
         #        except requests.exceptions.RequestException as e:
         #            break
+
