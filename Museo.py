@@ -2,7 +2,10 @@ from Departamento import Departamento
 from Obra import Obra
 from Autor import Autor
 from Obras import Obras
+
 import requests
+
+from PIL import Image
 
 class Museo:
     def __init__(self, objects_datos, object_datos, deparments_datos):
@@ -37,17 +40,14 @@ Elija una opción de búqueda de obras:
                 self.buscar_obra_departamentoID()
 
                 self.mostrar_obra()
-                    
+                                    
             elif busqueda== "2":
                 
                 nacionalidades = ["Afghan", "Albanian", "Algerian", "American", "Andorran", "Angolan", "Anguillan", "Argentine", "Armenian", "Australian", "Austrian", "Azerbaijani", "Bahamian", "Bahraini", "Bangladeshi", "Barbadian", "Belarusian", "Belgian", "Belizean", "Beninese", "Bermudian", "Bhutanese", "Bolivian", "Botswanan", "Brazilian", "British", "British Virgin Islander", "Bruneian", "Bulgarian", "Burkinan", "Burmese", "Burundian", "Cambodian", "Cameroonian", "Canadian", "Cape Verdean", "Cayman Islander", "Central African", "Chadian", "Chilean", "Chinese", "Citizen of Antigua and Barbuda", "Citizen of Bosnia and Herzegovina", "Citizen of Guinea-Bissau", "Citizen of Kiribati", "Citizen of Seychelles", "Citizen of the Dominican Republic", "Citizen of Vanuatu", "Colombian", "Comoran", "Congolese (Congo)", "Congolese (DRC)", "Cook Islander", "Costa Rican", "Croatian", "Cuban", "Cymraes", "Cymro", "Cypriot", "Czech", "Danish", "Djiboutian", "Dominican", "Dutch", "East Timorese", "Ecuadorean", "Egyptian", "Emirati", "English", "Equatorial Guinean", "Eritrean", "Estonian", "Ethiopian", "Faroese", "Fijian", "Filipino", "Finnish", "French", "Gabonese", "Gambian", "Georgian", "German", "Ghanaian", "Gibraltarian", "Greek", "Greenlandic", "Grenadian", "Guamanian", "Guatemalan", "Guinean", "Guyanese", "Haitian", "Honduran", "Hong Konger", "Hungarian", "Icelandic", "Indian", "Indonesian", "Iranian", "Iraqi", "Irish", "Israeli", "Italian", "Ivorian", "Jamaican", "Japanese", "Jordanian", "Kazakh", "Kenyan", "Kittitian", "Kosovan", "Kuwaiti", "Kyrgyz", "Lao", "Latvian", "Lebanese", "Liberian", "Libyan", "Liechtenstein citizen", "Lithuanian", "Luxembourger", "Macanese", "Macedonian", "Malagasy", "Malawian", "Malaysian", "Maldivian", "Malian", "Maltese", "Marshallese", "Martiniquais", "Mauritanian", "Mauritian", "Mexican", "Micronesian", "Moldovan", "Monegasque", "Mongolian", "Montenegrin", "Montserratian", "Moroccan", "Mosotho", "Mozambican", "Namibian", "Nauruan", "Nepalese", "New Zealander", "Nicaraguan", "Nigerian", "Nigerien", "Niuean", "North Korean", "Northern Irish", "Norwegian", "Omani", "Pakistani", "Palauan", "Palestinian", "Panamanian", "Papua New Guinean", "Paraguayan", "Peruvian", "Pitcairn Islander", "Polish", "Portuguese", "Prydeinig", "Puerto Rican", "Qatari", "Romanian", "Russian", "Rwandan", "Salvadorean", "Sammarinese", "Samoan", "Sao Tomean", "Saudi Arabian", "Scottish", "Senegalese", "Serbian", "Sierra Leonean", "Singaporean", "Slovak", "Slovenian", "Solomon Islander", "Somali", "South African", "South Korean", "South Sudanese", "Spanish", "Sri Lankan", "St Helenian", "St Lucian", "Stateless", "Sudanese", "Surinamese", "Swazi", "Swedish", "Swiss", "Syrian", "Taiwanese", "Tajik", "Tanzanian", "Thai", "Togolese", "Tongan", "Trinidadian", "Tristanian", "Tunisian", "Turkish", "Turkmen", "Turks and Caicos Islander", "Tuvaluan", "Ugandan", "Ukrainian", "Uruguayan", "Uzbek", "Vatican citizen", "Venezuelan", "Vietnamese", "Vincentian", "Wallisian", "Welsh", "Yemeni", "Zambian", "Zimbabwean"]
                 
                 for nacion in nacionalidades:
                     print(nacion)
-                               
-                #for nacionalidad in self.nacionalidades:
-                    #print(nacionalidad)
-                    
+                                                   
                 self.buscar_obra_nacionalidad()
                 
                 self.mostrar_obra()
@@ -61,32 +61,76 @@ Elija una opción de búqueda de obras:
 
             elif busqueda== "4":
                 break
+            
             else:
                 print("No válido, ingrese un número")
                 print()
     
-
+    
     def mostrar_obra(self):
         obraID = int(input("Ingrese el id de la obra que desea ver: "))
         print()
         object_list = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/objects/{obraID}", timeout= 30) 
         
-        #obra= object_list.json() #<-código ari
-        #departamento_encontrado= None
-        #for departamento in self.departamentos:
-        #    if departamento.id == obra.get("departmentId"):
-        #        departamento_encontrado == departamento
-        #self.obras.append(Obra(obra.get("title"), obra.get("artistDisplayName"), departamento_encontrado, obra.get("objectName"), obra.get("objectBeginDate"), obra.get("primaryImage")))
-        #for obra in self.obras:
-        #    obra.show()
-        #    print() #tooodo código ari
-        
         obra_m= object_list.json()
+               
         self.obras.append(Obra(obra_m.get("title"), obra_m.get("artistDisplayName"), obra_m.get("artistNationality"), obra_m.get("artistBeginDate"), obra_m.get("artistEndDate"), obra_m.get("objectName"), obra_m.get("objectDate"), obra_m.get("primaryImage")))
         for obra in self.obras:
             obra.show()
             print()
+        
+        id = input("""¿Mostrar imagen?
+-> Si
+-> No                           
+""")
+        print(id)
+        
+        if id == "Si":
+             
+            self.guardar_imagen_desde_url(obra_m["primaryImage"], f"obra_{obraID}")
+            #print(nombre_archivo_destino)
+            #img = Image.open(nombre_archivo_destino)
+            #img.show()
+                          
+    def guardar_imagen_desde_url(url, nombre_archivo):
+        
+            """
+            Descarga una imagen desde una URL y la guarda en un archivo.
+            """
+            try:
                 
+                response = requests.get(url, stream=True)
+                response.raise_for_status()  
+
+                content_type = response.headers.get('Content-Type')
+                extension = '.png'  
+                
+                if content_type:
+                    
+                    if 'image/png' in content_type:
+                        extension = '.png'
+                        
+                    elif 'image/jpeg' in content_type:
+                        extension = '.jpg'
+                        
+                    elif 'image/svg+xml' in content_type:
+                        extension = '.svg'
+                        
+                nombre_archivo_final = f"{nombre_archivo}{extension}"
+
+                with open(nombre_archivo_final, 'wb') as file:
+                    for chunk in response.iter_content(chunk_size=8192):
+                        file.write(chunk)
+                print(f"Imagen guardada exitosamente como '{nombre_archivo_final}'")
+
+            except requests.exceptions.RequestException as e:
+                print(f"Error al hacer el request: {e}")
+                
+            except IOError as e:
+                print(f"Error al escribir el archivo: {e}")
+                
+            return nombre_archivo_final
+                                        
     def buscar_obra_departamentoID(self):
         obras_departamento = int(input("Escriba el ID del departamento para ver las obras: "))
         print()
@@ -95,7 +139,7 @@ Elija una opción de búqueda de obras:
         search_departamento = search_obras_departamento.json()
         
         obras_ids = search_departamento["objectIDs"]
-        for id in obras_ids[:30]:
+        for id in obras_ids[:10]:
             obras_encontradas = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/objects/{id}", timeout=20)         
             mostrar_obra = obras_encontradas.json()
             
