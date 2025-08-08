@@ -4,6 +4,13 @@ from PIL import Image
 def guardar_imagen_desde_url(url, nombre_archivo):    
     """
     Descarga una imagen desde una URL y la guarda en un archivo.
+    
+    Args:
+        url (str): URL de la imagen.
+        nombre_archivo (str): Nombre del archivo. 
+        
+    Returns:
+        str: Nombre del archivo junto a la extensión.
     """
     nombre_archivo_final = None
     
@@ -44,4 +51,4 @@ def guardar_imagen_desde_url(url, nombre_archivo):
         print(f"Error al escribir el archivo: {e}")
                 
     return nombre_archivo_final
-                
+    
