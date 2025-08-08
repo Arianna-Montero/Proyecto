@@ -99,7 +99,7 @@ Elija una opción de búqueda de obras:
 -> No                           
 """)            
             print()
-            if id == "Si":
+            if id == "Si" or "si" or "s" or "i":
                 
                 if obra_detalles.get("primaryImage"):
                     nombre_archivo = guardar_imagen_desde_url(obra_detalles["primaryImage"], f"obra_{obraID}")
@@ -245,3 +245,4 @@ Elija una opción de búqueda de obras:
         except requests.exceptions.RequestException as e:
                 print("No se pudo encontrar al autor")
                 return
+
