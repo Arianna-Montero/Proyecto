@@ -1,7 +1,4 @@
 import requests
-"""
-Acceder a los datos de las obras del museo
-"""
 
 objects = requests.get("https://collectionapi.metmuseum.org/public/collection/v1/objects") #200
 deparments = requests.get("https://collectionapi.metmuseum.org/public/collection/v1/departments") #200
