@@ -1,7 +1,7 @@
 from Museo import Museo
-from bd import deparments_datos, objects_datos, nacionalidades
+from bd import objects_datos, deparments_datos, nacionalidades
 
 def main():
-    museo=Museo(deparments_datos, objects_datos, nacionalidades)
+    museo=Museo(objects_datos, deparments_datos, nacionalidades)
     museo.start()
 main()
